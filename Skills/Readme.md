@@ -1,0 +1,1 @@
+This is a folder that will store all the installable skills
