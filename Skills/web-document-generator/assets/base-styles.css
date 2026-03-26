@@ -1,16 +1,16 @@
 /**
  * Web Document Generator — Base Styles
- * Based on Light Spectrum Design System
+ * Design Tokens: LightSpectrum Design System v1.0.0
+ * Source: Lightmetrics Figma Design System
  *
  * Responsive Breakpoints:
  * - Mobile: < 640px
- * - Tablet: 640px - 1023px
- * - Desktop: 1024px - 1199px
- * - Large Desktop: >= 1200px (sidebar visible)
+ * - Tablet: 640px - 1199px
+ * - Desktop: >= 1200px (sidebar visible)
  */
 
 /* ==========================================================================
-   RESET & TOKENS
+   RESET
    ========================================================================== */
 
 *, *::before, *::after {
@@ -19,17 +19,25 @@
   padding: 0;
 }
 
+/* ==========================================================================
+   LIGHTSPECTRUM DESIGN TOKENS
+   ========================================================================== */
+
 :root {
-  /* Typography — Font Family */
+  /* ========================================================================
+     TYPOGRAPHY
+     ======================================================================== */
+
+  /* Font Family */
   --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Typography — Font Weights */
+  /* Font Weights */
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
-  /* Typography — Fluid Font Sizes (scales between 320px and 1440px viewports) */
+  /* Fluid Font Sizes (scales between 320px and 1440px viewports) */
   --font-size-display: clamp(31.93px, calc(26.72px + 1.628vw), 50.16px);
   --font-size-h1: clamp(28.38px, calc(24.55px + 1.198vw), 41.8px);
   --font-size-h2: clamp(25.23px, calc(22.48px + 0.858vw), 34.84px);
@@ -42,7 +50,23 @@
   --font-size-text-small: clamp(11.67px, calc(11.45px + 0.069vw), 12.44px);
   --font-size-caption: clamp(9.72px, calc(9.34px + 0.120vw), 11.06px);
 
-  /* Typography — Line Heights */
+  /* Static Font Sizes — NON-WEB CONTEXTS ONLY (print, email, JS interpolation) */
+  --font-size-display-min: 31.93px;
+  --font-size-display-max: 50.16px;
+  --font-size-h1-min: 28.38px;
+  --font-size-h1-max: 41.8px;
+  --font-size-h2-min: 25.23px;
+  --font-size-h2-max: 34.84px;
+  --font-size-h3-min: 22.43px;
+  --font-size-h3-max: 29.03px;
+  --font-size-h4-min: 19.93px;
+  --font-size-h4-max: 24.19px;
+  --font-size-h5-min: 17.72px;
+  --font-size-h5-max: 20.16px;
+  --font-size-h6-min: 15.75px;
+  --font-size-h6-max: 16.8px;
+
+  /* Line Heights */
   --line-height-display: 1.2;
   --line-height-h1: 1.2;
   --line-height-h2: 1.25;
@@ -52,14 +76,26 @@
   --line-height-h6: 1.45;
   --line-height-text: 1.6;
 
-  /* Typography — Letter Spacing */
+  /* Letter Spacing */
   --letter-spacing-display: -0.04em;
   --letter-spacing-h1: -0.025em;
   --letter-spacing-h2: -0.02em;
   --letter-spacing-h3: -0.01em;
+  --letter-spacing-h4: 0;
+  --letter-spacing-h5: 0;
+  --letter-spacing-h6: 0;
   --letter-spacing-text: 0;
 
-  /* Colors — Primary (Plum) */
+  /* ========================================================================
+     COLORS - PALETTES
+     ======================================================================== */
+
+  /* Base Colors */
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+  --color-transparent: transparent;
+
+  /* Plum (Brand Primary) */
   --color-plum-50: #FDF5FE;
   --color-plum-100: #FCEAFE;
   --color-plum-200: #F5D4FA;
@@ -72,7 +108,7 @@
   --color-plum-900: #6C1964;
   --color-plum-950: #470B40;
 
-  /* Colors — Secondary (Eastern Blue) */
+  /* Eastern Blue (Secondary) */
   --color-eastern-blue-50: #EFFCFC;
   --color-eastern-blue-100: #D7F6F6;
   --color-eastern-blue-200: #B4EDED;
@@ -85,7 +121,7 @@
   --color-eastern-blue-900: #234E56;
   --color-eastern-blue-950: #123339;
 
-  /* Colors — Neutral (Shark) */
+  /* Shark (Neutral) */
   --color-shark-50: #F5F5F5;
   --color-shark-100: #E9E8E8;
   --color-shark-200: #D2D1D0;
@@ -98,25 +134,147 @@
   --color-shark-900: #3E3C3C;
   --color-shark-950: #212121;
 
-  /* Colors — Status */
+  /* ========================================================================
+     COLORS - STATUS
+     ======================================================================== */
+
+  /* Success (Green) */
   --color-success-50: #DCF9F0;
   --color-success-500: #0C9C71;
+
+  /* Warning (Yellow) */
   --color-warning-50: #FBF6EF;
   --color-warning-500: #D38B43;
+
+  /* Error (Red) */
   --color-error-50: #FAE6E6;
   --color-error-500: #D34343;
 
-  /* Theme — Light Mode */
-  --theme-background: #F8FAFC;
-  --theme-surface: #FFFFFF;
+  /* Neutral Status (Grey) */
+  --color-neutral-50: var(--color-shark-50);
+  --color-neutral-500: var(--color-shark-400);
+
+  /* Disabled */
+  --color-disabled-50: var(--color-shark-50);
+  --color-disabled-500: var(--color-shark-200);
+
+  /* ========================================================================
+     SPACING
+     ======================================================================== */
+
+  --space-0: 0px;
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-16: 64px;
+  --space-18: 72px;
+  --space-20: 80px;
+  --space-22: 88px;
+  --space-24: 96px;
+  --space-26: 104px;
+  --space-28: 112px;
+  --space-30: 120px;
+  --space-32: 128px;
+
+  /* ========================================================================
+     BORDER RADIUS
+     ======================================================================== */
+
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-default: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+  --radius-full: 9999px;
+
+  /* ========================================================================
+     BRAND SWATCH
+     ======================================================================== */
+
+  /* Primary (Plum - Light Mode) */
+  --brand-swatch-primary-color: #8B2682;
+  --brand-swatch-primary-variant-medium: #DF56DA;
+  --brand-swatch-primary-variant-dark: #470B40;
+  --brand-swatch-primary-variant-light: #FCEAFE;
+  --brand-swatch-primary-text: #FFFFFF;
+
+  /* Primary Dark (Plum - Dark Mode) */
+  --brand-swatch-primary-dark-color: #C356BC;
+  --brand-swatch-primary-dark-variant-medium: #DF56DA;
+  --brand-swatch-primary-dark-variant-dark: #FCEAFE;
+  --brand-swatch-primary-dark-variant-light: #470B40;
+  --brand-swatch-primary-dark-text: #FCEAFE;
+
+  /* Secondary (Eastern Blue - Light Mode) */
+  --brand-swatch-secondary-color: #2898A2;
+  --brand-swatch-secondary-variant-medium: #80E0E0;
+  --brand-swatch-secondary-variant-dark: #123339;
+  --brand-swatch-secondary-variant-light: #EFFCFC;
+  --brand-swatch-secondary-text: #123339;
+
+  /* Secondary Dark (Eastern Blue - Dark Mode) */
+  --brand-swatch-secondary-dark-color: #45C9CB;
+  --brand-swatch-secondary-dark-variant-medium: #80E0E0;
+  --brand-swatch-secondary-dark-variant-dark: #EFFCFC;
+  --brand-swatch-secondary-dark-variant-light: #123339;
+  --brand-swatch-secondary-dark-text: #EFFCFC;
+
+  /* ========================================================================
+     DOCUMENT LAYOUT
+     ======================================================================== */
+
+  --sidebar-w: 260px;
+  --header-h: 64px;
+  --content-max: 900px;
+  --content-padding-x: var(--space-4);
+  --content-padding-y: var(--space-6);
+  --section-gap: var(--space-10);
+}
+
+/* ==========================================================================
+   THEME - LIGHT MODE (Default)
+   ========================================================================== */
+
+:root,
+[data-theme="light"] {
+  /* Semantic Colors */
+  --theme-background: var(--color-shark-50);
+  --theme-surface: var(--color-white);
   --theme-text: var(--color-shark-950);
   --theme-subtext: var(--color-shark-600);
   --theme-muted: var(--color-shark-400);
   --theme-border: var(--color-shark-200);
   --theme-border-light: #E4E4E7;
-  --theme-brand: var(--color-plum-800);
+  --theme-hover: var(--color-shark-50);
+
+  /* Brand Colors */
+  --theme-brand: var(--brand-swatch-primary-color);
+  --theme-brand-500: var(--brand-swatch-primary-variant-medium);
+  --theme-brand-950: var(--brand-swatch-primary-variant-dark);
+  --theme-brand-50: var(--brand-swatch-primary-variant-light);
   --theme-brand-light: #f3e8f2;
-  --theme-brand-dark: var(--color-plum-950);
+  --theme-brand-text: var(--brand-swatch-primary-text);
+
+  /* Aliases */
+  --brand-color: var(--brand-swatch-primary-color);
+  --brand-variant-medium: var(--brand-swatch-primary-variant-medium);
+  --brand-variant-dark: var(--brand-swatch-primary-variant-dark);
+  --brand-variant-light: var(--brand-swatch-primary-variant-light);
+  --brand-text: var(--brand-swatch-primary-text);
+
+  /* Status */
+  --status-text: var(--color-shark-950);
 
   /* Callouts */
   --warning-bg: #FFFBEB;
@@ -131,40 +289,96 @@
   --success-bg: #F0FDF4;
   --success-border: #86EFAC;
   --success-txt: #166534;
+}
 
-  /* Spacing Scale */
-  --space-0: 0;
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
-  --space-16: 64px;
-  --space-20: 80px;
-  --space-24: 96px;
+/* ==========================================================================
+   THEME - DARK MODE
+   ========================================================================== */
 
-  /* Border Radius */
-  --radius-sm: 2px;
-  --radius-default: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
-  --radius-full: 9999px;
+[data-theme="dark"] {
+  --theme-background: var(--color-shark-950);
+  --theme-surface: var(--color-shark-900);
+  --theme-text: var(--color-shark-50);
+  --theme-subtext: var(--color-shark-400);
+  --theme-muted: var(--color-shark-500);
+  --theme-border: var(--color-shark-800);
+  --theme-border-light: var(--color-shark-700);
+  --theme-hover: var(--color-shark-900);
 
-  /* Layout */
-  --sidebar-w: 260px;
-  --header-h: 64px;
-  --content-max: 900px;
+  --theme-brand: var(--brand-swatch-primary-dark-color);
+  --theme-brand-500: var(--brand-swatch-primary-dark-variant-medium);
+  --theme-brand-950: var(--brand-swatch-primary-dark-variant-dark);
+  --theme-brand-50: var(--brand-swatch-primary-dark-variant-light);
+  --theme-brand-light: var(--color-plum-950);
+  --theme-brand-text: var(--brand-swatch-primary-dark-text);
 
-  /* Responsive Content Padding */
-  --content-padding-x: var(--space-4);
-  --content-padding-y: var(--space-6);
-  --section-gap: var(--space-10);
+  --brand-color: var(--brand-swatch-primary-dark-color);
+  --brand-variant-medium: var(--brand-swatch-primary-dark-variant-medium);
+  --brand-variant-dark: var(--brand-swatch-primary-dark-variant-dark);
+  --brand-variant-light: var(--brand-swatch-primary-dark-variant-light);
+  --brand-text: var(--brand-swatch-primary-dark-text);
+
+  --status-text: var(--color-shark-50);
+}
+
+/* ==========================================================================
+   THEME - SECONDARY (Eastern Blue)
+   ========================================================================== */
+
+[data-theme="secondary"] {
+  --theme-background: var(--color-shark-50);
+  --theme-surface: var(--color-white);
+  --theme-text: var(--color-shark-950);
+  --theme-subtext: var(--color-shark-600);
+  --theme-muted: var(--color-shark-400);
+  --theme-border: var(--color-shark-200);
+  --theme-border-light: #E4E4E7;
+  --theme-hover: var(--color-shark-50);
+
+  --theme-brand: var(--brand-swatch-secondary-color);
+  --theme-brand-500: var(--brand-swatch-secondary-variant-medium);
+  --theme-brand-950: var(--brand-swatch-secondary-variant-dark);
+  --theme-brand-50: var(--brand-swatch-secondary-variant-light);
+  --theme-brand-light: var(--color-eastern-blue-50);
+  --theme-brand-text: var(--brand-swatch-secondary-text);
+
+  --brand-color: var(--brand-swatch-secondary-color);
+  --brand-variant-medium: var(--brand-swatch-secondary-variant-medium);
+  --brand-variant-dark: var(--brand-swatch-secondary-variant-dark);
+  --brand-variant-light: var(--brand-swatch-secondary-variant-light);
+  --brand-text: var(--brand-swatch-secondary-text);
+
+  --status-text: var(--color-shark-950);
+}
+
+/* ==========================================================================
+   THEME - SECONDARY DARK
+   ========================================================================== */
+
+[data-theme="secondary-dark"] {
+  --theme-background: var(--color-shark-950);
+  --theme-surface: var(--color-shark-900);
+  --theme-text: var(--color-shark-50);
+  --theme-subtext: var(--color-shark-400);
+  --theme-muted: var(--color-shark-500);
+  --theme-border: var(--color-shark-800);
+  --theme-border-light: var(--color-shark-700);
+  --theme-hover: var(--color-shark-900);
+
+  --theme-brand: var(--brand-swatch-secondary-dark-color);
+  --theme-brand-500: var(--brand-swatch-secondary-dark-variant-medium);
+  --theme-brand-950: var(--brand-swatch-secondary-dark-variant-dark);
+  --theme-brand-50: var(--brand-swatch-secondary-dark-variant-light);
+  --theme-brand-light: var(--color-eastern-blue-950);
+  --theme-brand-text: var(--brand-swatch-secondary-dark-text);
+
+  --brand-color: var(--brand-swatch-secondary-dark-color);
+  --brand-variant-medium: var(--brand-swatch-secondary-dark-variant-medium);
+  --brand-variant-dark: var(--brand-swatch-secondary-dark-variant-dark);
+  --brand-variant-light: var(--brand-swatch-secondary-dark-variant-light);
+  --brand-text: var(--brand-swatch-secondary-dark-text);
+
+  --status-text: var(--color-shark-50);
 }
 
 /* ==========================================================================
@@ -232,6 +446,7 @@ h4, .h4 {
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-medium);
   line-height: var(--line-height-h4);
+  letter-spacing: var(--letter-spacing-h4);
   color: var(--theme-text);
 }
 
@@ -239,6 +454,7 @@ h5, .h5 {
   font-size: var(--font-size-h5);
   font-weight: var(--font-weight-medium);
   line-height: var(--line-height-h5);
+  letter-spacing: var(--letter-spacing-h5);
   color: var(--theme-text);
 }
 
@@ -246,6 +462,7 @@ h6, .h6 {
   font-size: var(--font-size-h6);
   font-weight: var(--font-weight-medium);
   line-height: var(--line-height-h6);
+  letter-spacing: var(--letter-spacing-h6);
   color: var(--theme-text);
 }
 
@@ -259,6 +476,27 @@ body[data-lang="es"] [data-lang]:not([data-lang="es"]),
 body[data-lang="fr"] [data-lang]:not([data-lang="fr"]),
 body[data-lang="de"] [data-lang]:not([data-lang="de"]) {
   display: none !important;
+}
+
+/* ==========================================================================
+   SCROLL PROGRESS BAR
+   ========================================================================== */
+
+.scroll-progress {
+  position: fixed;
+  top: var(--header-h);
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--theme-border-light);
+  z-index: 99;
+}
+
+.scroll-bar {
+  height: 100%;
+  background: var(--theme-brand);
+  width: 0%;
+  transition: width 0.1s;
 }
 
 /* ==========================================================================
@@ -350,8 +588,14 @@ body[data-lang="de"] [data-lang]:not([data-lang="de"]) {
   margin-top: 1px;
 }
 
-.lang-selector {
+.header-right {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.lang-selector {
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -546,14 +790,14 @@ body[data-lang="de"] [data-lang]:not([data-lang="de"]) {
 .sidebar {
   position: fixed;
   top: var(--header-h);
-  left: 0;
+  right: 0;
   bottom: 0;
   width: min(var(--sidebar-w), 85vw);
   background: var(--theme-surface);
-  border-right: 1px solid var(--theme-border-light);
+  border-left: 1px solid var(--theme-border-light);
   display: flex;
   flex-direction: column;
-  transform: translateX(-100%);
+  transform: translateX(100%);
   transition: transform 0.25s ease;
   z-index: 120;
   overflow-y: auto;
@@ -564,11 +808,15 @@ body[data-lang="de"] [data-lang]:not([data-lang="de"]) {
   transform: translateX(0);
 }
 
-/* Large desktop: sidebar always visible */
+/* Large desktop: sidebar on LEFT, always visible */
 @media (min-width: 1200px) {
   .sidebar {
+    left: 0;
+    right: auto;
     transform: none;
     width: var(--sidebar-w);
+    border-left: none;
+    border-right: 1px solid var(--theme-border-light);
   }
 }
 
@@ -668,6 +916,17 @@ body[data-lang="de"] [data-lang]:not([data-lang="de"]) {
   padding: var(--space-4);
   border-top: 1px solid var(--theme-border-light);
   font-size: var(--font-size-text-main);
+}
+
+.sidebar__back-to-top {
+  display: block;
+  color: var(--theme-subtext);
+  margin-bottom: var(--space-2);
+}
+
+.sidebar__date {
+  font-size: var(--font-size-text-small);
+  color: var(--theme-muted);
 }
 
 /* ==========================================================================
@@ -906,7 +1165,26 @@ body[data-lang="de"] [data-lang]:not([data-lang="de"]) {
 }
 
 /* ==========================================================================
-   SCREENSHOT
+   IMAGE CONTAINER
+   ========================================================================== */
+
+.image-container {
+  background: var(--theme-brand-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+}
+
+/* ==========================================================================
+   SCREENSHOT PANEL
    ========================================================================== */
 
 .screenshot-panel {
@@ -937,21 +1215,6 @@ body[data-lang="de"] [data-lang]:not([data-lang="de"]) {
   border-radius: var(--radius-xl);
   border: 1px solid var(--theme-border-light);
   box-shadow: 0 2px 8px rgba(0,0,0,.08);
-  cursor: zoom-in;
-  transition: transform 0.2s;
-}
-
-.screenshot-panel__img--zoom {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(1);
-  width: min(90vw, 360px);
-  max-height: 90vh;
-  object-fit: contain;
-  z-index: 200;
-  box-shadow: 0 8px 32px rgba(0,0,0,.25);
-  cursor: zoom-out;
 }
 
 .screenshot-panel__caption {
@@ -1215,6 +1478,7 @@ details[open] .decision-table__toggle::after {
   .sidebar-overlay,
   .hamburger,
   .lang-selector,
+  .scroll-progress,
   .step-nav {
     display: none !important;
   }

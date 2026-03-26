@@ -1,96 +1,59 @@
-# Design Tokens — Light Spectrum
+# Design Tokens — LightSpectrum
 
-Design tokens for Lightmetrics web documents. Based on the Light Spectrum design system.
+All design tokens for web document templates are sourced from the **LightSpectrum Design System**.
 
-## Responsive Breakpoints
+## Authoritative Source
+
+```
+projects/Lightmetrics/paper-setup/lightspectrum.css
+```
+
+The `assets/base-styles.css` in this skill embeds all LightSpectrum tokens. Any token updates must be synced from the source file.
+
+---
+
+## Quick Reference
+
+### Responsive Breakpoints
 
 | Breakpoint | Width | Usage |
 |------------|-------|-------|
-| Mobile | < 640px | Phone portrait/landscape |
-| Tablet | 640px - 1023px | Tablet, small laptop |
-| Desktop | 1024px - 1199px | Standard desktop |
-| Large Desktop | >= 1200px | Wide screens, sidebar visible |
+| Mobile | < 640px | Single column, hamburger nav |
+| Tablet | 640px - 1199px | Full header, hamburger nav, panel from right |
+| Desktop | >= 1200px | Full header, sidebar always visible on left |
 
 ```css
 /* Mobile first approach */
 @media (min-width: 640px)  { /* Tablet+ */ }
-@media (min-width: 1024px) { /* Desktop+ */ }
-@media (min-width: 1200px) { /* Large Desktop+ with sidebar */ }
+@media (min-width: 1200px) { /* Desktop+ with sidebar */ }
 ```
 
 ---
 
-## Typography
+## Theme Switching
 
-### Font Family
-```css
---font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+Use `data-theme` attribute on `<body>` or `<html>`:
+
+| Theme | Value | Brand Color |
+|-------|-------|-------------|
+| Light (default) | `light` | Plum (#8B2682) |
+| Dark | `dark` | Plum light (#C356BC) |
+| Secondary | `secondary` | Eastern Blue (#2898A2) |
+| Secondary Dark | `secondary-dark` | Eastern Blue light (#45C9CB) |
+
+```html
+<body data-theme="light">       <!-- Primary/Plum theme (default) -->
+<body data-theme="dark">        <!-- Primary dark mode -->
+<body data-theme="secondary">   <!-- Eastern Blue theme -->
+<body data-theme="secondary-dark"> <!-- Eastern Blue dark mode -->
 ```
-
-### Font Weights
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--font-weight-regular` | 400 | Body text |
-| `--font-weight-medium` | 500 | Emphasis, labels |
-| `--font-weight-semibold` | 600 | Sub-headings, badges |
-| `--font-weight-bold` | 700 | Headings, strong emphasis |
-
-### Fluid Font Sizes
-
-Typography uses CSS `clamp()` for smooth scaling between 320px and 1440px viewports.
-
-| Token | Mobile | Desktop | Formula |
-|-------|--------|---------|---------|
-| `--font-size-display` | 32px | 50px | `clamp(31.93px, calc(26.72px + 1.628vw), 50.16px)` |
-| `--font-size-h1` | 28px | 42px | `clamp(28.38px, calc(24.55px + 1.198vw), 41.8px)` |
-| `--font-size-h2` | 25px | 35px | `clamp(25.23px, calc(22.48px + 0.858vw), 34.84px)` |
-| `--font-size-h3` | 22px | 29px | `clamp(22.43px, calc(20.54px + 0.589vw), 29.03px)` |
-| `--font-size-h4` | 20px | 24px | `clamp(19.93px, calc(18.71px + 0.380vw), 24.19px)` |
-| `--font-size-h5` | 18px | 20px | `clamp(17.72px, calc(17.02px + 0.218vw), 20.16px)` |
-| `--font-size-h6` | 16px | 17px | `clamp(15.75px, calc(15.45px + 0.094vw), 16.8px)` |
-| `--font-size-text-large` | 16px | 17px | `clamp(15.75px, calc(15.45px + 0.094vw), 16.8px)` |
-| `--font-size-text-main` | 14px | 14px | Fixed (no scaling) |
-| `--font-size-text-small` | 12px | 12px | `clamp(11.67px, calc(11.45px + 0.069vw), 12.44px)` |
-| `--font-size-caption` | 10px | 11px | `clamp(9.72px, calc(9.34px + 0.120vw), 11.06px)` |
-
-### Line Heights (Unitless)
-
-Using unitless values for proper scaling with fluid fonts:
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--line-height-display` | 1.2 | Display headings |
-| `--line-height-h1` | 1.2 | H1 headings |
-| `--line-height-h2` | 1.25 | H2 headings |
-| `--line-height-h3` | 1.3 | H3 headings |
-| `--line-height-h4` | 1.35 | H4 headings |
-| `--line-height-h5` | 1.4 | H5 headings |
-| `--line-height-h6` | 1.45 | H6 headings |
-| `--line-height-text` | 1.6 | Body text, paragraphs |
-
-### Letter Spacing (em units)
-
-Using `em` units for proportional scaling with font size:
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--letter-spacing-display` | -0.04em | Display text (tight) |
-| `--letter-spacing-h1` | -0.025em | H1 headings |
-| `--letter-spacing-h2` | -0.02em | H2 headings |
-| `--letter-spacing-h3` | -0.01em | H3 headings |
-| `--letter-spacing-text` | 0 | Body text |
 
 ---
 
-## Colors
-
-### Base Colors
-```css
---color-white: #FFFFFF;
---color-black: #000000;
-```
+## Color Palettes
 
 ### Primary Brand — Plum
+
 | Token | Hex | Usage |
 |-------|-----|-------|
 | `--color-plum-50` | #FDF5FE | Lightest tint |
@@ -106,6 +69,7 @@ Using `em` units for proportional scaling with font size:
 | `--color-plum-950` | #470B40 | Darkest |
 
 ### Secondary — Eastern Blue
+
 | Token | Hex | Usage |
 |-------|-----|-------|
 | `--color-eastern-blue-50` | #EFFCFC | Lightest tint |
@@ -121,6 +85,7 @@ Using `em` units for proportional scaling with font size:
 | `--color-eastern-blue-950` | #123339 | Darkest |
 
 ### Neutral — Shark
+
 | Token | Hex | Usage |
 |-------|-----|-------|
 | `--color-shark-50` | #F5F5F5 | Page background |
@@ -136,6 +101,7 @@ Using `em` units for proportional scaling with font size:
 | `--color-shark-950` | #212121 | **Primary text** |
 
 ### Status Colors
+
 | Token | Hex | Usage |
 |-------|-----|-------|
 | `--color-success-50` | #DCF9F0 | Success background |
@@ -147,26 +113,138 @@ Using `em` units for proportional scaling with font size:
 
 ---
 
+## Semantic Theme Variables
+
+Use these instead of raw palette colors for automatic theme support:
+
+```css
+--theme-background    /* Page background */
+--theme-surface       /* Card/panel background */
+--theme-text          /* Primary text */
+--theme-subtext       /* Secondary text */
+--theme-muted         /* Tertiary/placeholder text */
+--theme-border        /* Standard borders */
+--theme-border-light  /* Subtle borders */
+--theme-hover         /* Hover state backgrounds */
+--theme-brand         /* Brand accent color */
+--theme-brand-light   /* Brand tint for backgrounds */
+--theme-brand-text    /* Text on brand backgrounds */
+```
+
+---
+
+## Brand Swatch System
+
+The brand swatch provides consistent brand color variations across themes:
+
+```css
+/* Primary (Plum) Light Mode */
+--brand-swatch-primary-color: #8B2682
+--brand-swatch-primary-variant-medium: #DF56DA
+--brand-swatch-primary-variant-dark: #470B40
+--brand-swatch-primary-variant-light: #FCEAFE
+--brand-swatch-primary-text: #FFFFFF
+
+/* Primary (Plum) Dark Mode — inverted */
+--brand-swatch-primary-dark-color: #C356BC
+--brand-swatch-primary-dark-variant-dark: #FCEAFE
+--brand-swatch-primary-dark-variant-light: #470B40
+
+/* Secondary (Eastern Blue) Light Mode */
+--brand-swatch-secondary-color: #2898A2
+--brand-swatch-secondary-variant-medium: #80E0E0
+--brand-swatch-secondary-variant-dark: #123339
+--brand-swatch-secondary-variant-light: #EFFCFC
+
+/* Secondary (Eastern Blue) Dark Mode — inverted */
+--brand-swatch-secondary-dark-color: #45C9CB
+```
+
+---
+
+## Typography
+
+### Font Family
+
+```css
+--font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+```
+
+### Font Weights
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--font-weight-regular` | 400 | Body text |
+| `--font-weight-medium` | 500 | Emphasis, labels |
+| `--font-weight-semibold` | 600 | Sub-headings, badges |
+| `--font-weight-bold` | 700 | Headings, strong emphasis |
+
+### Fluid Font Sizes
+
+**Always use fluid tokens for web** — they scale smoothly between 320px and 1440px viewports:
+
+| Token | Mobile | Desktop |
+|-------|--------|---------|
+| `--font-size-display` | 32px | 50px |
+| `--font-size-h1` | 28px | 42px |
+| `--font-size-h2` | 25px | 35px |
+| `--font-size-h3` | 22px | 29px |
+| `--font-size-h4` | 20px | 24px |
+| `--font-size-h5` | 18px | 20px |
+| `--font-size-h6` | 16px | 17px |
+| `--font-size-text-large` | 16px | 17px |
+| `--font-size-text-main` | 14px | 14px (fixed) |
+| `--font-size-text-small` | 12px | 12px |
+| `--font-size-caption` | 10px | 11px |
+
+Static `-min`/`-max` variants are available for print/email/JS interpolation only.
+
+### Line Heights
+
+| Token | Value |
+|-------|-------|
+| `--line-height-display` | 1.2 |
+| `--line-height-h1` | 1.2 |
+| `--line-height-h2` | 1.25 |
+| `--line-height-h3` | 1.3 |
+| `--line-height-h4` | 1.35 |
+| `--line-height-h5` | 1.4 |
+| `--line-height-h6` | 1.45 |
+| `--line-height-text` | 1.6 |
+
+### Letter Spacing
+
+| Token | Value |
+|-------|-------|
+| `--letter-spacing-display` | -0.04em |
+| `--letter-spacing-h1` | -0.025em |
+| `--letter-spacing-h2` | -0.02em |
+| `--letter-spacing-h3` | -0.01em |
+| `--letter-spacing-h4` to `--letter-spacing-text` | 0 |
+
+---
+
 ## Spacing
 
 Based on 4px grid:
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--space-0` | 0px | None |
-| `--space-0-5` | 2px | Hairline |
-| `--space-1` | 4px | Tight |
-| `--space-2` | 8px | Compact |
-| `--space-3` | 12px | Snug |
-| `--space-4` | 16px | Default |
-| `--space-5` | 20px | Comfortable |
-| `--space-6` | 24px | Relaxed |
-| `--space-8` | 32px | Loose |
-| `--space-10` | 40px | Section |
-| `--space-12` | 48px | Large section |
-| `--space-16` | 64px | Page section |
-| `--space-20` | 80px | Major section |
-| `--space-24` | 96px | Hero spacing |
+| Token | Value |
+|-------|-------|
+| `--space-0` | 0px |
+| `--space-0-5` | 2px |
+| `--space-1` | 4px |
+| `--space-2` | 8px |
+| `--space-3` | 12px |
+| `--space-4` | 16px |
+| `--space-5` | 20px |
+| `--space-6` | 24px |
+| `--space-8` | 32px |
+| `--space-10` | 40px |
+| `--space-12` | 48px |
+| `--space-16` | 64px |
+| `--space-20` | 80px |
+| `--space-24` | 96px |
+| `--space-32` | 128px |
 
 ---
 
@@ -186,100 +264,74 @@ Based on 4px grid:
 
 ---
 
-## Theme Variables
-
-### Light Mode (Default)
-```css
---theme-background: var(--color-shark-50);    /* #F5F5F5 */
---theme-text: var(--color-shark-950);          /* #212121 */
---theme-subtext: var(--color-shark-600);       /* #5E5B5A */
---theme-border: var(--color-shark-200);        /* #D2D1D0 */
---theme-hover: var(--color-shark-50);          /* #F5F5F5 */
---theme-brand: var(--color-plum-800);          /* #8B2682 */
-```
-
-### Callout Colors
-```css
-/* Warning */
---callout-warning-bg: #FFFBEB;
---callout-warning-border: #FCD34D;
---callout-warning-text: #92400E;
-
-/* Info */
---callout-info-bg: #EFF6FF;
---callout-info-border: #BFDBFE;
---callout-info-text: #1E40AF;
-
-/* Conditional/Special */
---callout-conditional-bg: #FDF4FF;
---callout-conditional-border: #D8B4FE;
---callout-conditional-text: #6B21A8;
-
-/* Success */
---callout-success-bg: #F0FDF4;
---callout-success-border: #86EFAC;
---callout-success-text: #166534;
-```
-
----
-
 ## Document Layout
 
-### Dimensions
 ```css
---sidebar-width: 260px;
---header-height: 64px;
---content-max-width: 900px;
-```
-
-### Responsive Breakpoints
-```css
-/* Mobile first */
-@media (min-width: 640px)  { /* Tablet */ }
-@media (min-width: 768px)  { /* Small desktop */ }
-@media (min-width: 1024px) { /* Desktop */ }
-@media (min-width: 1200px) { /* Large desktop - sidebar visible */ }
+--sidebar-w: 260px
+--header-h: 64px
+--content-max: 900px
 ```
 
 ---
 
-## Usage Examples
+## Callout Colors
 
-### Apply to HTML Document
+```css
+/* Warning */
+--warning-bg: #FFFBEB
+--warning-border: #FCD34D
+--warning-txt: #92400E
+
+/* Info */
+--info-bg: #EFF6FF
+--info-border: #BFDBFE
+--info-txt: #1E40AF
+
+/* Conditional/Special */
+--cond-bg: #FDF4FF
+--cond-border: #D8B4FE
+--cond-txt: #6B21A8
+
+/* Success */
+--success-bg: #F0FDF4
+--success-border: #86EFAC
+--success-txt: #166534
+```
+
+---
+
+## Usage Example
+
 ```html
 <style>
-:root {
-  /* Import all tokens here */
-  --color-plum-800: #8B2682;
-  /* ... */
-}
+  /* All tokens are embedded in base-styles.css */
 
-body {
-  font-family: var(--font-family-primary);
-  background: var(--theme-background);
-  color: var(--theme-text);
-  line-height: 1.6;
-}
+  .my-card {
+    background: var(--theme-surface);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
 
-h1 {
-  font-size: var(--font-size-h1);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: var(--letter-spacing-h1);
-  color: var(--theme-text);
-}
+  .my-heading {
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-semibold);
+    color: var(--theme-text);
+  }
 
-.brand-accent {
-  color: var(--theme-brand);
-}
-
-.card {
-  background: var(--color-white);
-  border: 1px solid var(--theme-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
-}
+  .my-accent {
+    color: var(--theme-brand);
+  }
 </style>
 ```
 
-### Complete CSS Import
-See `assets/base-styles.css` for a complete stylesheet with all tokens applied.
+---
+
+## Syncing Tokens
+
+When LightSpectrum is updated, sync to this skill:
+
+1. Read updated `projects/Lightmetrics/paper-setup/lightspectrum.css`
+2. Update token definitions in `assets/base-styles.css`
+3. Keep component styles (header, sidebar, etc.) unchanged
+4. Test with all four themes: light, dark, secondary, secondary-dark
