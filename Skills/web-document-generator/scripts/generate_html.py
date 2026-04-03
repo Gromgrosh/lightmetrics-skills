@@ -379,6 +379,30 @@ def generate_scripts(languages: List[str] = None) -> str:
     document.addEventListener('keydown', (e) => {{
       if (e.key === 'Escape') closeSidebar();
     }});
+
+    // Active sidebar link on scroll
+    (function() {{
+      const sidebarLinks = document.querySelectorAll('.sidebar__link');
+      const sectionIds = Array.from(sidebarLinks).map(link => link.getAttribute('href')?.replace('#', '')).filter(Boolean);
+      const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
+      if (sections.length === 0) return;
+
+      const observer = new IntersectionObserver((entries) => {{
+        entries.forEach(entry => {{
+          if (entry.isIntersecting) {{
+            sidebarLinks.forEach(link => link.classList.remove('active'));
+            const activeLink = document.querySelector('.sidebar__link[href="#' + entry.target.id + '"]');
+            if (activeLink) activeLink.classList.add('active');
+          }}
+        }});
+      }}, {{
+        rootMargin: '-10% 0px -80% 0px',
+        threshold: 0
+      }});
+
+      sections.forEach(section => observer.observe(section));
+    }})();
   </script>
 '''
 

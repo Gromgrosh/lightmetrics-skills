@@ -367,7 +367,7 @@ window.addEventListener('scroll', () => {
 <!-- Header -->
 <header class="site-header">
   <div class="site-header__brand">
-    <img src="./assets/lightmetrics-logo.svg" alt="Lightmetrics" class="brand-logo-img" />
+    <img src="./assets/brand/brand_lightmetrics-logo.webp" alt="Lightmetrics" class="brand-logo-img" />
     <span class="brand-divider"></span>
     <span class="brand-text">
       <span class="brand-name">[Document Name]</span>
@@ -422,6 +422,14 @@ window.addEventListener('scroll', () => {
   </div>
 </aside>
 ```
+
+#### Active State Behavior
+
+As the user scrolls, the sidebar link corresponding to the currently visible section receives the `.active` class. This is handled by an `IntersectionObserver` in the generated JavaScript.
+
+- **CSS class:** `.sidebar__link.active` — left border accent, brand-colored number badge, semibold title
+- **Trigger:** Section enters the top 10-80% viewport band
+- **Mutual exclusion:** Only one link is active at a time
 
 ### Hero Section
 

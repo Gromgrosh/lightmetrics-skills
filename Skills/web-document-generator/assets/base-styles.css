@@ -886,6 +886,21 @@ body[data-lang="de"] [data-lang]:not([data-lang="de"]) {
   text-decoration: none;
 }
 
+.sidebar__link.active {
+  background: var(--theme-brand-light);
+  border-left: 3px solid var(--theme-brand);
+  text-decoration: none;
+}
+
+.sidebar__link.active .sidebar__num {
+  background: var(--theme-brand);
+  color: #fff;
+}
+
+.sidebar__link.active .sidebar__step-title {
+  font-weight: var(--font-weight-semibold);
+}
+
 .sidebar__num {
   width: 24px;
   height: 24px;

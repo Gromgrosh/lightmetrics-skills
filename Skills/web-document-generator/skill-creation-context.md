@@ -22,14 +22,19 @@ web-document-generator/
 │   │   ├── installation-guide.md     # Step-by-step installation procedures
 │   │   ├── product-spec.md           # Technical specifications
 │   │   ├── process-workflow.md       # Business/technical processes
-│   │   └── technical-manual.md       # Comprehensive reference docs
+│   │   ├── technical-manual.md       # Comprehensive reference docs
+│   │   └── common-template-spec.md   # Shared header/sidebar/layout specs
+│   ├── template-comparison.md        # Structural comparison of all 4 templates
 │   ├── design-tokens.md              # Light Spectrum colors, typography, spacing
 │   └── writing-guidelines.md         # Style guide for content
 ├── scripts/
 │   ├── generate_html.py              # HTML generation utilities
 │   └── validate_document.py          # Quality validation checks
 └── assets/
-    └── base-styles.css               # Base CSS with all design tokens
+    ├── base-styles.css               # Base CSS with all design tokens
+    └── brand/
+        ├── brand_lightmetrics-logo.webp  # Lightmetrics logo
+        └── brand_rideview-logo.svg       # RideView logo
 ```
 
 ---
@@ -127,9 +132,45 @@ The skill triggers when users ask to:
 
 ---
 
-## Next Steps (Optional)
+## Recent Changes
 
-1. **Install skill** — Copy to `~/.claude/skills/web-document-generator/`
+### Logo Path Fix (2026-04-03)
+Updated all template and spec files to reference the correct logo asset:
+- **Old:** `./assets/lightmetrics-logo.svg` (non-existent)
+- **New:** `./assets/brand/brand_lightmetrics-logo.webp` (actual file)
+- Files updated: all 4 templates + common-template-spec.md
+
+### Sidebar Active States (2026-04-03)
+Added scroll-based active state highlighting for sidebar navigation:
+- **CSS:** `.sidebar__link.active` with left border accent, brand-colored number badge, semibold title (`base-styles.css`)
+- **JS:** `IntersectionObserver` in `generate_scripts()` that tracks visible section and toggles `.active` class (`generate_html.py`)
+- **Docs:** Active state behavior documented in `common-template-spec.md`
+
+---
+
+## Planned: How to Use This Skill Guide
+
+**Status:** Planned, not yet implemented
+
+When the skill activates, add an entry-point menu offering two paths:
+1. **Create a document** — proceeds to Phase 1 as today
+2. **How to use this skill** — presents a full walkthrough inline
+
+The walkthrough will cover:
+- **Before you start** — what to have ready (content scope, audience, languages, Figma URLs/screenshots, reference docs)
+- **Phase-by-phase walkthrough** — for each of the 7 phases: what Claude asks, what the user provides, what artifacts are created, when review/approval happens
+- **Document types explained** — when to pick each template
+- **Tips & best practices** — provide Figma links early, consolidate feedback, keep scope tight
+- **Resuming a session** — how to pick up an abandoned project
+- **Output** — what the final deliverable looks like (self-contained HTML, multi-language, responsive)
+
+**File to modify:** `SKILL.md` — add entry-point menu section + usage guide section
+
+---
+
+## Next Steps
+
+1. **Implement usage guide** — Add entry-point menu and walkthrough to SKILL.md
 2. **Test with real content** — Create actual installation guide
 3. **Figma integration test** — Verify screenshot extraction via MCP
 4. **Evaluate and iterate** — Run skill-creator evals if needed

@@ -63,7 +63,7 @@ Use this template for comprehensive reference documentation, system administrati
   <!-- Header -->
   <header class="site-header">
     <a href="#" class="site-header__brand">
-      <img src="./assets/lightmetrics-logo.svg" alt="Lightmetrics" class="brand-logo-img" />
+      <img src="./assets/brand/brand_lightmetrics-logo.webp" alt="Lightmetrics" class="brand-logo-img" />
       <span class="brand-divider"></span>
       <span class="brand-text">
         <span class="brand-name">Technical Manual</span>
