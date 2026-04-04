@@ -146,31 +146,31 @@ Added scroll-based active state highlighting for sidebar navigation:
 - **JS:** `IntersectionObserver` in `generate_scripts()` that tracks visible section and toggles `.active` class (`generate_html.py`)
 - **Docs:** Active state behavior documented in `common-template-spec.md`
 
+### Image Rules & Content Assembly (2026-04-04)
+Comprehensive image extraction and referencing rules added to SKILL.md:
+- 3 source types: Figma design URLs, FigJam board URLs, manual images
+- Strict naming convention per document type (`s1_0-description.ext`, `ch1_0-description.ext`, etc.)
+- Image manifest v2.0 schema with full source provenance
+- MCP tool selection matrix for Figma/FigJam extraction
+- Phase 1 Discovery made interactive with `AskUserQuestion` batches
+
+### Content Drafting Phase & Usage Guide (2026-04-04)
+- Workflow expanded from 7 to **8 phases** with new Phase 3: Content Drafting
+- `final_content.md` is now written and approved before image assembly
+- Language translations generated and approved in Phase 3 (`final_content_{lang}.md`)
+- Entry-point menu added: "Create a document" or "How to use this skill"
+- Full inline walkthrough guide added covering all 8 phases, document types, content collection, tips, and resuming sessions
+
 ---
 
-## Planned: How to Use This Skill Guide
+## ~~Planned: How to Use This Skill Guide~~ ✅ Implemented (2026-04-04)
 
-**Status:** Planned, not yet implemented
-
-When the skill activates, add an entry-point menu offering two paths:
-1. **Create a document** — proceeds to Phase 1 as today
-2. **How to use this skill** — presents a full walkthrough inline
-
-The walkthrough will cover:
-- **Before you start** — what to have ready (content scope, audience, languages, Figma URLs/screenshots, reference docs)
-- **Phase-by-phase walkthrough** — for each of the 7 phases: what Claude asks, what the user provides, what artifacts are created, when review/approval happens
-- **Document types explained** — when to pick each template
-- **Tips & best practices** — provide Figma links early, consolidate feedback, keep scope tight
-- **Resuming a session** — how to pick up an abandoned project
-- **Output** — what the final deliverable looks like (self-contained HTML, multi-language, responsive)
-
-**File to modify:** `SKILL.md` — add entry-point menu section + usage guide section
+Implemented as the "Getting Started" entry-point menu and "How to Use This Skill" inline guide section in SKILL.md.
 
 ---
 
 ## Next Steps
 
-1. **Implement usage guide** — Add entry-point menu and walkthrough to SKILL.md
-2. **Test with real content** — Create actual installation guide
-3. **Figma integration test** — Verify screenshot extraction via MCP
-4. **Evaluate and iterate** — Run skill-creator evals if needed
+1. **Test with real content** — Create actual installation guide using the full 8-phase workflow
+2. **Figma integration test** — Verify screenshot extraction via MCP
+3. **Evaluate and iterate** — Run skill-creator evals if needed

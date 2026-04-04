@@ -16,17 +16,118 @@ Create professional B2B technical documents as self-contained HTML files with co
 
 ## Workflow Overview
 
-The document creation process follows 7 phases with clear handoffs:
+The document creation process follows 8 phases with clear handoffs:
 
 | Phase | Name | Purpose |
 |-------|------|---------|
 | 1 | Discovery Interview | Understand requirements, create document brief |
 | 2 | Structure Blueprint | Design content architecture |
-| 3 | Content Assembly | Gather assets, screenshots, content |
-| 4 | Draft Generation | Build initial HTML document |
-| 5 | Review Cycle | Iterative feedback and revision |
-| 6 | Output Production | Finalize and validate |
-| 7 | Delivery & Handoff | Package for distribution |
+| 3 | Content Drafting | Write and approve full content + translations |
+| 4 | Content Assembly | Gather assets, screenshots, images |
+| 5 | Draft Generation | Build initial HTML document |
+| 6 | Review Cycle | Iterative feedback and revision |
+| 7 | Output Production | Finalize and validate |
+| 8 | Delivery & Handoff | Package for distribution |
+
+---
+
+## Getting Started
+
+When the skill activates, use `AskUserQuestion` to present two paths:
+
+| # | Question | Header | Options |
+|---|----------|--------|---------|
+| 1 | "What would you like to do?" | `Get started` | **Create a document** — Start the 8-phase workflow to build a new technical document · **How to use this skill** — See a walkthrough of the full process before starting |
+
+- If **Create a document** → proceed to Phase 1.
+- If **How to use this skill** → present the guide below, then ask if they're ready to start.
+
+---
+
+## How to Use This Skill
+
+A walkthrough of the entire document creation process so you know what to expect.
+
+### Before You Start
+
+Have these ready before beginning:
+
+- [ ] **Content scope** — what the document covers, and what's explicitly out of scope
+- [ ] **Target audience** — who will read this and their technical level
+- [ ] **Languages** — which languages the document needs to support
+- [ ] **Image sources** — Figma design URLs, FigJam board URLs, and/or local image files
+- [ ] **Reference materials** — existing docs, specs, or content to build from
+
+### Phase-by-Phase Walkthrough
+
+| Phase | What Claude Does | What You Provide | Key Artifacts | Approval Point |
+|-------|-----------------|-------------------|---------------|----------------|
+| **1. Discovery** | Asks interactive questions in 2 batches | Pick from choices or type custom answers, provide a doc name | `context.md` | Approve the Document Brief |
+| **2. Structure** | Proposes section outline based on template | Review, reorder, add/remove sections | `structure.md` | Approve the structure |
+| **3. Content Drafting** | Writes complete text for every section, then generates translations for each requested language | Review primary language text section-by-section, then review translations | `final_content.md`, `final_content_{lang}.md` | Approve content + translations |
+| **4. Content Assembly** | Extracts images from Figma/FigJam/manual sources, applies naming convention, builds manifest | Provide URLs and file paths, confirm renaming table and image-to-section mapping | `assets/`, `image-manifest.json`, `content-status.md` | Confirm image mapping |
+| **5. Draft Generation** | Builds full HTML from approved content + images | Review in browser | `draft-v1.html` | Review the draft |
+| **6. Review Cycle** | Makes targeted revisions from your feedback | Provide feedback (content, style, structure, assets) | `draft-v{N}.html`, `revision-log.md` | Mark "Ready for output" |
+| **7. Output** | Validates accessibility, images, links; generates quality report | Review final output | `final/index.html`, `quality-report.md` | Approve final |
+| **8. Delivery** | Packages into `dist/` folder with README and maintenance guide | Share with team | `dist/` folder | Done |
+
+### Document Types Explained
+
+| Type | Best For | Example |
+|------|----------|---------|
+| **Installation Guide** | Step-by-step hardware/software setup with numbered steps and screenshots | "RideView Device Installation Guide" |
+| **Product Specification** | Technical details, features, requirements, compatibility matrices | "RideView Camera Specifications" |
+| **Process Workflow** | Business processes, approval flows, RACI matrices | "Fleet Onboarding Process" |
+| **Technical Manual** | Comprehensive reference docs, API guides, admin procedures | "RideView Platform Admin Manual" |
+
+### Content Collection: What to Prepare
+
+The skill supports **3 image source types**:
+
+| Source | How to Provide | What Happens |
+|--------|---------------|--------------|
+| **Figma design URLs** | Paste `figma.com/design/...` links | Claude extracts screenshots automatically via MCP tools |
+| **FigJam board URLs** | Paste `figma.com/board/...` links | Claude extracts diagrams and flow images via MCP tools |
+| **Local image files** | Paste file paths or drag/drop images into the conversation | Claude copies and renames them into the project `assets/` folder |
+
+**During Phase 4 (Content Assembly):**
+1. Claude classifies all your sources
+2. Extracts images and auto-renames them using a strict convention (e.g., `s1_0-device-overview.jpg` for Step 1 of an Installation Guide)
+3. Presents a mapping table showing which image goes in which section, with what layout (full-width or side-by-side)
+4. You confirm or adjust before proceeding
+
+**Tip:** Provide Figma and FigJam links early in Phase 1 so Claude can reference designs during structure planning (Phase 2) and content writing (Phase 3).
+
+### Tips & Best Practices
+
+- **Provide all image links upfront** in Discovery — it helps Claude plan the structure around them
+- **Keep scope tight** — one document per workflow run works best
+- **Consolidate feedback** into a single round when possible (Phase 6 warns at 5+ iterations)
+- **Use "Other"** in interactive questions for custom answers beyond the predefined choices
+- **For multilingual docs**, review translations carefully in Phase 3 — native speaker review is ideal
+- **Content before images** — the full text is written and approved (Phase 3) before images are assembled (Phase 4), so content changes don't require re-mapping images
+
+### Resuming a Session
+
+If a conversation is interrupted, start a new session and point Claude to the project folder. Claude detects the current phase by checking which artifacts exist:
+
+| Artifacts Found | Resume At |
+|-----------------|-----------|
+| Only `context.md` | Phase 2 — Structure Blueprint |
+| `context.md` + `structure.md` | Phase 3 — Content Drafting |
+| `structure.md` + `final_content.md` | Phase 4 — Content Assembly |
+| `final_content.md` + `image-manifest.json` | Phase 5 — Draft Generation |
+| `draft-v{N}.html` exists | Phase 6 — Review Cycle |
+| `quality-report.md` exists | Phase 8 — Delivery & Handoff |
+
+### Output
+
+The final deliverable is:
+- **Self-contained HTML** — all CSS embedded in `<style>` tags, images in `./assets/`
+- **Multi-language toggle** in the header (if configured)
+- **Responsive** — mobile (<640px), tablet (640-1199px), desktop (≥1200px)
+- **Accessible** — alt text on all images, correct heading hierarchy, WCAG AA contrast
+- **Packaged** in a `dist/` folder ready to share with your dev team
 
 ---
 
@@ -128,7 +229,47 @@ User approves structure → Phase 3
 
 ---
 
-## Phase 3: Content Assembly
+## Phase 3: Content Drafting
+
+**Goal**: Write the complete document content as markdown in the primary language, get user approval, then generate all requested language translations.
+
+### Actions
+
+1. **Read approved `structure.md`** and the writing guidelines (`references/writing-guidelines.md`).
+
+2. **Draft full content for every section** into `final_content.md` (primary language first):
+   - Complete prose — headings, body text, callouts, decision tables, step-by-step instructions
+   - Follow writing guidelines: imperative verbs, active voice, progressive disclosure
+   - Use `[IMAGE: description]` placeholders where screenshots or diagrams will be inserted later
+   - Mark callout types inline: `[WARNING: text]`, `[INFO: text]`, `[CONDITIONAL: text]`, `[SUCCESS: text]`
+
+3. **Present the content for review** section by section:
+   - User can approve, edit, or request rewrites per section
+   - Track approval status per section within the file
+
+4. **Finalize primary language content** once all sections are approved.
+
+5. **Generate language translations** (based on languages selected in Phase 1):
+   - For each additional language (e.g., Portuguese, Spanish):
+     - Translate the approved `final_content.md` content
+     - Translate meaning, not just words — adapt idioms, maintain professional tone
+     - Preserve `[IMAGE: ...]` placeholders and `[WARNING]`/`[INFO]` markers as-is (these are not translated)
+     - Write to `final_content_{lang}.md` (e.g., `final_content_pt.md`, `final_content_es.md`)
+   - Present translations for user review (user or native speaker can approve/edit)
+   - If only one language was selected in Discovery, skip this step
+
+6. **Finalize all language files** once translations are approved.
+
+### Artifacts
+- `[document-name]/final_content.md` — approved primary language content with image placeholders
+- `[document-name]/final_content_{lang}.md` — approved translation per additional language (if multilingual)
+
+### Handoff
+User approves all content + translations → Phase 4
+
+---
+
+## Phase 4: Content Assembly
 
 **Goal**: Gather all assets and content needed for the document.
 
@@ -137,7 +278,7 @@ User approves structure → Phase 3
 > All image extraction follows the **Image Rules Reference** appendix at the end of this document. Refer to it for URL parsing, tool selection, naming conventions, and the manifest schema.
 
 1. **Classify image sources**:
-   - Scan all links and files provided during Discovery (Phase 1)
+   - Scan `final_content.md` for `[IMAGE: ...]` placeholders and cross-reference with links/files provided during Discovery (Phase 1)
    - Classify each as one of three source types:
      - `figma-design` — Figma design file URLs (`figma.com/design/...`)
      - `figjam-board` — FigJam board URLs (`figma.com/board/...`)
@@ -209,13 +350,13 @@ User approves structure → Phase 3
 - `[document-name]/content-status.md`
 
 ### Handoff
-Critical content collected → Phase 4
+Critical content collected → Phase 5
 
 ---
 
-## Phase 4: Draft Generation
+## Phase 5: Draft Generation
 
-**Goal**: Build the complete HTML document.
+**Goal**: Build the complete HTML document from approved content and assembled images.
 
 ### Actions
 
@@ -227,8 +368,9 @@ Critical content collected → Phase 4
    - Read `references/templates/[type].md`
    - Structure HTML according to template patterns
 
-3. **Generate section-by-section content**:
-   - For each section in structure.md:
+3. **Generate section-by-section HTML**:
+   - Read `final_content.md` (and `final_content_{lang}.md` for translations) — do NOT regenerate content, use the approved text
+   - For each section in final_content.md:
      - Purpose statement
      - Step-by-step actions
      - Decision points
@@ -257,11 +399,11 @@ Critical content collected → Phase 4
 - `[document-name]/draft-v1.html`
 
 ### Handoff
-User reviews draft → Phase 5
+User reviews draft → Phase 6
 
 ---
 
-## Phase 5: Review Cycle (Iterative)
+## Phase 6: Review Cycle (Iterative)
 
 **Goal**: Refine the document based on user feedback.
 
@@ -292,11 +434,11 @@ User reviews draft → Phase 5
 - `[document-name]/revision-log.md`
 
 ### Handoff
-User marks "Ready for output" → Phase 6
+User marks "Ready for output" → Phase 7
 
 ---
 
-## Phase 6: Output Production
+## Phase 7: Output Production
 
 **Goal**: Finalize the document for distribution.
 
@@ -334,11 +476,11 @@ User marks "Ready for output" → Phase 6
 - `[document-name]/quality-report.md`
 
 ### Handoff
-User reviews final → Phase 7
+User reviews final → Phase 8
 
 ---
 
-## Phase 7: Delivery & Handoff
+## Phase 8: Delivery & Handoff
 
 **Goal**: Package for distribution and handoff to dev team.
 
@@ -404,10 +546,13 @@ Read the appropriate template based on document type:
 If a session is abandoned, the skill can resume using:
 - `context.md` — Contains discovery interview answers
 - `structure.md` — Contains approved document structure
+- `final_content.md` — Contains approved primary language content
+- `final_content_{lang}.md` — Contains approved translations
+- `image-manifest.json` — Contains image assembly state
 - `feedback-document.md` — Contains outstanding feedback items
 - Latest `draft-v{N}.html` — Current document state
 
-When resuming, identify the current phase by checking which artifacts exist and their state.
+When resuming, identify the current phase by checking which artifacts exist (see **How to Use This Skill → Resuming a Session** for the detection table).
 
 ---
 
@@ -590,7 +735,7 @@ The manifest tracks every image with full provenance and status:
 
 ### HTML Referencing Patterns
 
-Phase 4 reads the manifest `layout` field to select the correct HTML pattern:
+Phase 5 reads the manifest `layout` field to select the correct HTML pattern:
 
 **`full-width`** — Use for overview images, diagrams, wide screenshots:
 ```html
@@ -627,7 +772,7 @@ Phase 4 reads the manifest `layout` field to select the correct HTML pattern:
 
 ### Validation Checks
 
-Run these checks during Phase 6 (Output Production):
+Run these checks during Phase 7 (Output Production):
 
 | Check | Applies To | Severity |
 |-------|-----------|----------|
