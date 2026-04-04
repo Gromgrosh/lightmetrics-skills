@@ -5,7 +5,9 @@ description: Generate professional B2B technical documents (installation guides,
 
 # Web Document Generator
 
-Create professional B2B technical documents as self-contained HTML files with configurable language support. This skill guides you through a structured 7-phase workflow from discovery to delivery.
+Create professional B2B technical documents as self-contained HTML files with configurable language support. This skill guides you through a structured 8-phase workflow from discovery to delivery.
+
+> **IMPORTANT — Start here:** When this skill activates, ALWAYS begin at the **Getting Started** section below. Do NOT skip ahead to Phase 1. Present the entry-point menu first using `AskUserQuestion` so the user can choose between creating a document or learning how the skill works.
 
 ## Document Types
 
@@ -40,7 +42,7 @@ When the skill activates, use `AskUserQuestion` to present two paths:
 | 1 | "What would you like to do?" | `Get started` | **Create a document** — Start the 8-phase workflow to build a new technical document · **How to use this skill** — See a walkthrough of the full process before starting |
 
 - If **Create a document** → proceed to Phase 1.
-- If **How to use this skill** → present the guide below, then ask if they're ready to start.
+- If **How to use this skill** → present the guide below. **Do NOT immediately ask a follow-up question or prompt the user to start.** End your message after displaying the guide and let the user read at their own pace. Only proceed to Phase 1 when the user explicitly says they're ready (e.g., "let's start", "create a document", "ready").
 
 ---
 
