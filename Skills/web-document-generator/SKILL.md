@@ -23,7 +23,7 @@ The document creation process follows 8 phases with clear handoffs:
 | Phase | Name | Purpose |
 |-------|------|---------|
 | 1 | Discovery Interview | Understand requirements, create document brief |
-| 2 | Structure Blueprint | Design content architecture |
+| 2 | Flow Capture & Structure Blueprint | Capture Figma/FigJam flows into raw_content.md + assets, then design structure |
 | 3 | Content Drafting | Write and approve full content + translations |
 | 4 | Content Assembly | Gather assets, screenshots, images |
 | 5 | Draft Generation | Build initial HTML document |
@@ -65,7 +65,7 @@ Have these ready before beginning:
 | Phase | What Claude Does | What You Provide | Key Artifacts | Approval Point |
 |-------|-----------------|-------------------|---------------|----------------|
 | **1. Discovery** | Asks interactive questions in 2 batches | Pick from choices or type custom answers, provide a doc name | `context.md` | Approve the Document Brief |
-| **2. Structure** | Proposes section outline based on template | Review, reorder, add/remove sections | `structure.md` | Approve the structure |
+| **2. Flow Capture & Structure** | Reads each Figma/FigJam flow end-to-end, downloads all screens at 2x PNG, captures step-by-step content + designer notes into `raw_content.md`, then proposes a structure | Provide Figma/FigJam URLs, review captured content and proposed structure | `raw_content.md`, `assets/` (raw-named), `image-manifest.json` (bootstrapped), `structure.md` | Approve `raw_content.md` + structure |
 | **3. Content Drafting** | Writes complete text for every section, then generates translations for each requested language | Review primary language text section-by-section, then review translations | `final_content.md`, `final_content_{lang}.md` | Approve content + translations |
 | **4. Content Assembly** | Extracts images from Figma/FigJam/manual sources, applies naming convention, builds manifest | Provide URLs and file paths, confirm renaming table and image-to-section mapping | `assets/`, `image-manifest.json`, `content-status.md` | Confirm image mapping |
 | **5. Draft Generation** | Builds full HTML from approved content + images | Review in browser | `draft-v1.html` | Review the draft |
@@ -92,13 +92,19 @@ The skill supports **3 image source types**:
 | **FigJam board URLs** | Paste `figma.com/board/...` links | Claude extracts diagrams and flow images via MCP tools |
 | **Local image files** | Paste file paths or drag/drop images into the conversation | Claude copies and renames them into the project `assets/` folder |
 
+**During Phase 2 (Flow Capture & Structure):**
+1. Claude reads every Figma/FigJam flow end-to-end and downloads all screens at 2x PNG into `assets/` with raw, descriptive filenames
+2. Captures every step, label, button, microcopy, and designer note/annotation into `raw_content.md`
+3. Bootstraps `image-manifest.json` with `status: "extracted"` (section/layout filled in later)
+4. Proposes a flow-aware structure in `structure.md`
+
 **During Phase 4 (Content Assembly):**
-1. Claude classifies all your sources
-2. Extracts images and auto-renames them using a strict convention (e.g., `s1_0-device-overview.jpg` for Step 1 of an Installation Guide)
+1. Claude classifies sources (Phase 2 pool + any new manual images)
+2. Lets you select which raw images get used; renames them to the strict convention (e.g., `s1_0-device-overview.jpg` for Step 1 of an Installation Guide)
 3. Presents a mapping table showing which image goes in which section, with what layout (full-width or side-by-side)
 4. You confirm or adjust before proceeding
 
-**Tip:** Provide Figma and FigJam links early in Phase 1 so Claude can reference designs during structure planning (Phase 2) and content writing (Phase 3).
+**Tip:** Provide Figma and FigJam links in Phase 1 so Phase 2 can capture them — that's what makes the structure proposal flow-aware.
 
 ### Tips & Best Practices
 
@@ -107,7 +113,8 @@ The skill supports **3 image source types**:
 - **Consolidate feedback** into a single round when possible (Phase 6 warns at 5+ iterations)
 - **Use "Other"** in interactive questions for custom answers beyond the predefined choices
 - **For multilingual docs**, review translations carefully in Phase 3 — native speaker review is ideal
-- **Content before images** — the full text is written and approved (Phase 3) before images are assembled (Phase 4), so content changes don't require re-mapping images
+- **Flows captured before structure** — in Phase 2, every Figma/FigJam flow is read end-to-end into `raw_content.md` (with all designer notes), and screens are downloaded at 2x PNG. This makes the structure proposal flow-aware rather than template-generic.
+- **Selection, not re-extraction, in Phase 4** — Phase 4 picks from the image pool created in Phase 2, applies the strict naming convention, and handles any manual images added late.
 
 ### Resuming a Session
 
@@ -115,10 +122,11 @@ If a conversation is interrupted, start a new session and point Claude to the pr
 
 | Artifacts Found | Resume At |
 |-----------------|-----------|
-| Only `context.md` | Phase 2 — Structure Blueprint |
-| `context.md` + `structure.md` | Phase 3 — Content Drafting |
+| Only `context.md` | Phase 2 — Flow Capture & Structure Blueprint |
+| `context.md` + partial `raw_content.md` (or partial `assets/` with `raw-` prefix) | Phase 2 — continue capture |
+| `raw_content.md` + bootstrapped `image-manifest.json` + `structure.md` | Phase 3 — Content Drafting |
 | `structure.md` + `final_content.md` | Phase 4 — Content Assembly |
-| `final_content.md` + `image-manifest.json` | Phase 5 — Draft Generation |
+| `final_content.md` + manifest entries with `status: "confirmed"` | Phase 5 — Draft Generation |
 | `draft-v{N}.html` exists | Phase 6 — Review Cycle |
 | `quality-report.md` exists | Phase 8 — Delivery & Handoff |
 
@@ -182,68 +190,117 @@ After collecting all answers:
 
 2. **Present the brief for approval** before creating any files.
 
-3. **Create project folder and context file** (only after approval):
+3. **Create project folder and copy brand assets** (only after approval):
    ```
    [document-name]/
    ├── context.md         # Discovery answers for resumability
-   └── assets/            # Will hold images and resources
+   └── assets/
+       └── brand/         # Copied from skill — LightMetrics + product logos
    ```
+
+   - Recursively copy `${SKILL_DIR}/assets/brand/` into `[document-name]/assets/brand/`
+   - `${SKILL_DIR}` is the directory that contains this `SKILL.md` (e.g. `/Users/mohit/.claude/skills/web-document-generator/`)
+   - Skip `.DS_Store` if present
+   - Verify the copy includes `brand_lightmetrics-logo.webp` — Phase 5 wires this into the document header
 
 4. **Save all answers to `context.md`** so the session can be resumed.
 
 ### Artifacts
 - `[document-name]/` folder created
 - `[document-name]/context.md` — captures all discovery info
+- `[document-name]/assets/brand/` — LightMetrics + product logos copied from the skill
 
 ### Handoff
 User approves the Document Brief → Phase 2
 
 ---
 
-## Phase 2: Structure Blueprint
+## Phase 2: Flow Capture & Structure Blueprint
 
-**Goal**: Design the document's content architecture.
+**Goal**: Capture every Figma/FigJam flow into a hyper-detailed `raw_content.md`, download all flow screens, then design the document's content architecture from what you captured.
+
+> **Source-of-truth note:** `raw_content.md` is the source of truth for Phase 2 (structure proposal) and Phase 3 (drafting `final_content.md`). From Phase 4 onward, `final_content.md` becomes the source of truth and `raw_content.md` is preserved on disk for traceability/resume support but not read again.
 
 ### Actions
 
-1. Analyze any provided source materials:
-   - Figma URLs → use Figma MCP to understand design
-   - Existing docs → extract structure patterns
-   - Reference materials → identify content sections
+1. **Inventory source materials** from `context.md` (Phase 1):
+   - Separate URLs into `figma-design` (`figma.com/design/...`) and `figjam-board` (`figma.com/board/...`)
+   - Parse each URL for `fileKey` and `nodeId` per **Image Rules Reference → URL Parsing**
+   - If the user selected "no images yet" or only manual sources in Phase 1, skip steps 2–5 and go straight to step 6
 
-2. Propose document structure based on the document type template:
-   - Read the appropriate template from `references/templates/`
-   - Adapt sections to user's specific needs
+2. **Capture each Figma design flow into `raw_content.md`** (be exhaustive — do not skip any frame or step):
+   - For each Figma design URL, call `mcp__a8305967…__get_design_context(fileKey, nodeId)` (preferred — returns screenshot, code, and contextual hints in one call)
+   - Walk every screen/frame in the flow in canvas order. For each one, append to `raw_content.md`:
+     - The screen's name/label
+     - Every visible step, instruction, label, body copy, button, error/empty state, and microcopy
+     - All Figma notes, annotations, and comments attached to that frame (these are returned in the design context payload — capture them verbatim under a "Designer notes" sub-heading)
+     - A reference back to the screen's image filename (assigned in step 4)
+   - Format `raw_content.md` to be reader-friendly: H2 per screen group, H3 per screen, bulleted/numbered lists for step content, blockquotes or callouts for designer notes
+   - Do **not** rewrite, summarize, or condense — `raw_content.md` is meant to preserve *everything*
 
-3. Write structure as markdown file (content-level, no HTML yet).
+3. **Capture each FigJam board into `raw_content.md`**:
+   - Call `mcp__a8305967…__get_figjam(fileKey, nodeId, includeImagesOfNodes: true)` for each board URL
+   - Walk every node, sticky, connector, and section in reading order. Append to `raw_content.md`:
+     - Sticky/text content verbatim
+     - Connector labels and flow direction (e.g. "Form submitted → Approval queue")
+     - Group/section headings
+     - Any inline notes or comments
+   - Format under its own H2 heading (e.g. "## Onboarding flow board")
 
-4. Present structure for review with these options:
-   - Approve as-is
-   - Reorder sections
-   - Add/remove sections
-   - Mark which sections need Claude's help vs user-provided content
+4. **Download all flow screens to `assets/` with raw names**:
+   - For Figma designs: export every captured frame as **PNG at 2x** (use the asset URLs returned by `get_design_context`, or call `mcp__a8305967…__get_screenshot` with `imageScale: 2` if needed)
+   - For FigJam: save the node images returned by `get_figjam`
+   - Use **raw, descriptive filenames** — not the strict naming convention yet. Recommended format: `raw-{kebab-case-frame-name}.png` (e.g. `raw-onboarding-welcome.png`, `raw-otp-verification-error.png`). Strip Figma layer-name junk like leading slashes, IDs, and dates.
+   - Save to `[document-name]/assets/`
+
+5. **Bootstrap `image-manifest.json`**:
+   - Use the v2.0 schema (see **Image Rules Reference → Manifest Schema**) with these Phase-2-specific values:
+     - `filename`: the raw name from step 4
+     - `status`: `"extracted"` (Phase 4 will move it to `"confirmed"`)
+     - `section`: `null` (filled in Phase 4)
+     - `layout`: `null` (filled in Phase 4)
+     - `alt`: `null` or a working draft caption from the Figma frame name (Phase 4 confirms the final alt text)
+     - Full `source` block (`type`, `url`, `fileKey`, `nodeId`, `tool`)
+     - `extractedAt`: ISO 8601 timestamp now
+   - Write to `[document-name]/image-manifest.json`
+
+6. **Propose the document structure**:
+   - Read the appropriate template from `references/templates/[type].md`
+   - Use `raw_content.md` as the **primary input** — the proposed sections must reflect the actual flow content, not just the generic template
+   - Write to `[document-name]/structure.md`
+   - For each section, indicate which raw-named images from `assets/` are likely candidates (this gives Phase 4 a head start)
+
+7. **Present for review** with these options:
+   - Approve as-is (raw_content.md and structure both look right)
+   - Reorder, add, or remove sections in `structure.md`
+   - Flag gaps in `raw_content.md` (missing screens, missing notes) and re-run capture for specific frames
+   - Mark which sections will be Claude-written vs. user-provided in Phase 3
 
 ### Artifacts
-- `[document-name]/structure.md` — content-level structure
+- `[document-name]/raw_content.md` — exhaustive flow capture (screens + notes + annotations)
+- `[document-name]/assets/` — all flow screens, raw-named, PNG @ 2x
+- `[document-name]/image-manifest.json` — bootstrapped (status: extracted, section/layout: null)
+- `[document-name]/structure.md` — content-level structure, informed by raw_content.md
 
 ### Handoff
-User approves structure → Phase 3
+User approves `raw_content.md` + `structure.md` → Phase 3
 
 ---
 
 ## Phase 3: Content Drafting
 
-**Goal**: Write the complete document content as markdown in the primary language, get user approval, then generate all requested language translations.
+**Goal**: Write a simplified, reader-friendly `final_content.md` derived from `raw_content.md` (Phase 2 capture), get user approval, then generate translations. From this phase forward, `final_content.md` becomes the source of truth for downstream phases.
 
 ### Actions
 
-1. **Read approved `structure.md`** and the writing guidelines (`references/writing-guidelines.md`).
+1. **Read approved `raw_content.md`** (the exhaustive Phase 2 capture), `structure.md` (organization), and `references/writing-guidelines.md` (style). `raw_content.md` is the input — every step, screen, and designer note in it should inform `final_content.md`. But `final_content.md` is intentionally a **distillation**: simplified, generalised, and easy to consume. You may consolidate similar steps, drop redundant microcopy, and rephrase for clarity. The hard rule is that you cannot invent content that isn't in `raw_content.md`.
 
 2. **Draft full content for every section** into `final_content.md` (primary language first):
    - Complete prose — headings, body text, callouts, decision tables, step-by-step instructions
    - Follow writing guidelines: imperative verbs, active voice, progressive disclosure
    - Use `[IMAGE: description]` placeholders where screenshots or diagrams will be inserted later
    - Mark callout types inline: `[WARNING: text]`, `[INFO: text]`, `[CONDITIONAL: text]`, `[SUCCESS: text]`
+   - Cross-check each section against `raw_content.md` before marking it ready for review. Where you intentionally simplify or omit something, that's fine — but flag any content from `raw_content.md` that you *couldn't place anywhere* so the user can decide whether it belongs (it might signal a missing section in `structure.md`).
 
 3. **Present the content for review** section by section:
    - User can approve, edit, or request rewrites per section
@@ -266,6 +323,10 @@ User approves structure → Phase 3
 - `[document-name]/final_content.md` — approved primary language content with image placeholders
 - `[document-name]/final_content_{lang}.md` — approved translation per additional language (if multilingual)
 
+> `raw_content.md` is **read-only** during Phase 3 — preserved for traceability. If you discover a capture gap, fix it by re-running the Phase 2 capture for that frame, not by editing `raw_content.md` here.
+>
+> From the end of Phase 3 onward, `final_content.md` is the source of truth for Phases 4–8. `raw_content.md` stays on disk for resume support but is not read again by downstream phases.
+
 ### Handoff
 User approves all content + translations → Phase 4
 
@@ -273,62 +334,48 @@ User approves all content + translations → Phase 4
 
 ## Phase 4: Content Assembly
 
-**Goal**: Gather all assets and content needed for the document.
+**Goal**: Select relevant images from the pool extracted in Phase 2, apply the naming convention, confirm section/layout/alt, and ingest any manual images the user provides late.
 
 ### Actions
 
-> All image extraction follows the **Image Rules Reference** appendix at the end of this document. Refer to it for URL parsing, tool selection, naming conventions, and the manifest schema.
+> Image rules (URL parsing, tool selection, naming conventions, manifest schema) are in the **Image Rules Reference** appendix at the end of this document.
 
 1. **Classify image sources**:
-   - Scan `final_content.md` for `[IMAGE: ...]` placeholders and cross-reference with links/files provided during Discovery (Phase 1)
-   - Classify each as one of three source types:
-     - `figma-design` — Figma design file URLs (`figma.com/design/...`)
-     - `figjam-board` — FigJam board URLs (`figma.com/board/...`)
-     - `manual` — Local file paths or images pasted/dragged into conversation
-   - Parse each URL to extract `fileKey` and `nodeId` (see **Image Rules Reference → URL Parsing**)
-   - Present the classified list to the user for confirmation before extracting
+   - Read `image-manifest.json` (already populated by Phase 2 with raw-named entries from Figma/FigJam, status: `extracted`)
+   - Cross-reference with `[IMAGE: ...]` placeholders in `final_content.md`
+   - Separately, accept any **new** manual images (file paths, pasted images) that weren't in Phase 1's inventory and add them to the manifest as `manual` entries with `status: "pending"`
+   - Present the consolidated list to the user before proceeding
 
-2. **Extract Figma design screenshots** (for each `figma-design` source):
-   - Parse the URL to get `fileKey` and `nodeId`
-   - Select the appropriate MCP tool (see **Image Rules Reference → Tool Selection Matrix**):
-     - **Preferred**: `get_design_context(fileKey, nodeId)` via web API — returns screenshot + context
-     - **Fallback**: `get_screenshot(fileKey, nodeId)` via web API — screenshot only
-     - **Desktop**: `mcp__Figma__get_screenshot(nodeId)` — if user has desktop app open
-   - Save the extracted image to `[document-name]/assets/` using the naming convention
-   - Log the source URL, fileKey, nodeId, and tool used in the manifest
+2. **Select relevant images from the Phase 2 pool**:
+   - For each `[IMAGE: ...]` placeholder in `final_content.md`, present the user with the raw-named candidates from `assets/` and let them pick the right one
+   - Mark unused raw images as either `archived` (kept in `assets/` but not referenced in the final doc) or `deleted` (removed from disk). Default is `archived`.
+   - Update each selected entry's status to `selected` (Phase 4's intermediate state) before renaming in step 4
 
-3. **Extract FigJam board images** (for each `figjam-board` source):
-   - Parse the board URL to get `fileKey` and `nodeId`
-   - Use `get_figjam(fileKey, nodeId)` via web API MCP with `includeImagesOfNodes: true`
-   - Save extracted node images to `[document-name]/assets/` using the naming convention
-   - FigJam images are typically diagrams, flowcharts, or process maps — name accordingly using `diag_` prefix if they don't map to a specific section
-
-4. **Process manual images** (for each `manual` source):
+3. **Process manual images** (only for `manual` entries newly added in step 1):
    - **File paths** (e.g., `/Users/.../screenshot.png`):
      - Validate the file exists at the given path
-     - Copy to `[document-name]/assets/` with the naming convention applied
+     - Copy to `[document-name]/assets/` (raw filename for now — step 4 below applies the strict naming convention)
      - Log `originalPath` and `method: "file-path"` in the manifest
    - **Pasted/dragged images** (provided directly in conversation):
      - Save the image data to `[document-name]/assets/` as a file
-     - Apply the naming convention
      - Log `method: "pasted"` in the manifest
    - If a file path is not found, warn the user immediately and mark the entry as `failed`
 
-5. **Apply naming convention** to all collected images:
-   - Follow the strict naming pattern from **Image Rules Reference → Naming Convention**:
+4. **Apply naming convention to selected images** (rename-from-raw):
+   - For each image with status `selected` (or newly added manual), rename from its raw name (e.g. `raw-onboarding-welcome.png`) to the strict convention (e.g. `s1_0-onboarding-welcome.png`) per **Image Rules Reference → Naming Convention**:
      - Pattern: `{prefix}{N}_{sub}-{description}.{ext}`
      - Prefix depends on document type: `s` (Installation Guide), `sec` (Product Spec), `stg` (Process Workflow), `ch` (Technical Manual)
      - `_0` = section overview/primary image; `_1`, `_2` = sub-images
      - Special prefixes for non-section images: `hero_`, `diag_`, `ref_`, `exc_`
-   - Present a renaming table to the user showing: original filename → new filename → target section
-   - Apply renames only after user confirms
+   - Present a renaming table to the user showing: raw filename → new filename → target section
+   - Apply renames to both the manifest entry and the file in `assets/` only after user confirms
 
-6. **Build image manifest** (`image-manifest.json`):
-   - Use the v2.0 schema (see **Image Rules Reference → Manifest Schema**)
-   - Each entry must include: `filename`, `alt`, `section`, `layout` (full-width or side-by-side), full `source` provenance, `status`, and `extractedAt` timestamp
-   - Write to `[document-name]/image-manifest.json`
+5. **Finalize image manifest** (`image-manifest.json`):
+   - Update each renamed entry: set `status: "confirmed"`, fill `section`, `layout` (full-width or side-by-side), and final `alt`
+   - **Derive `section` and `alt` text from `final_content.md`** — match each image to the section that references it, and write alt text consistent with how that section describes the screen. (`final_content.md` is the source of truth from Phase 4 onward; `raw_content.md` is no longer consulted here.)
+   - Preserve the `source` provenance and `extractedAt` timestamp from Phase 2
 
-7. **Link images to sections**:
+6. **Link images to sections**:
    - Cross-reference images against `structure.md` sections
    - Present an interactive mapping table to the user:
 
@@ -340,7 +387,7 @@ User approves all content + translations → Phase 4
    - User confirms or adjusts: section assignment, alt text, and layout choice
    - Update manifest with confirmed mappings
 
-8. **Present assembly status**:
+7. **Present assembly status**:
    - Summary counts: X Figma screenshots, X FigJam images, X manual images
    - Any failed extractions with reasons
    - Sections still missing images (from structure.md)
@@ -369,8 +416,10 @@ Critical content collected → Phase 5
 2. **Apply document type template**:
    - Read `references/templates/[type].md`
    - Structure HTML according to template patterns
+   - Render the document header with the LightMetrics logo at `./assets/brand/brand_lightmetrics-logo.webp`. If the project also has a product-specific logo (e.g. `./assets/brand/brand_rideview-logo.svg`), follow the document type template's recommendation for placement (typically alongside or beneath the LightMetrics mark).
 
 3. **Generate section-by-section HTML**:
+   - **Source-of-truth rule**: `final_content.md` is canonical — render exactly what it says. Do not consult `raw_content.md` at this stage; if `final_content.md` is silent on something, that's an intentional simplification from Phase 3, not a gap to fill in.
    - Read `final_content.md` (and `final_content_{lang}.md` for translations) — do NOT regenerate content, use the approved text
    - For each section in final_content.md:
      - Purpose statement
@@ -547,10 +596,11 @@ Read the appropriate template based on document type:
 
 If a session is abandoned, the skill can resume using:
 - `context.md` — Contains discovery interview answers
+- `raw_content.md` — Exhaustive Figma/FigJam flow capture from Phase 2 (read-only after Phase 3)
 - `structure.md` — Contains approved document structure
 - `final_content.md` — Contains approved primary language content
 - `final_content_{lang}.md` — Contains approved translations
-- `image-manifest.json` — Contains image assembly state
+- `image-manifest.json` — Image state (bootstrapped in Phase 2, finalized in Phase 4)
 - `feedback-document.md` — Contains outstanding feedback items
 - Latest `draft-v{N}.html` — Current document state
 
@@ -663,7 +713,9 @@ assets/
 
 ### Image Manifest Schema (v2.0)
 
-The manifest tracks every image with full provenance and status:
+The manifest tracks every image with full provenance and status.
+
+> **Phase 2 vs Phase 4 state:** Phase 2 writes entries with `status: "extracted"`, raw filenames, full `source` provenance, and `section`/`layout`/`alt` set to `null`. Phase 4 renames the file, fills in `section`/`layout`/`alt` (derived from `final_content.md`), and flips `status` to `"confirmed"`.
 
 ```json
 {
@@ -721,10 +773,10 @@ The manifest tracks every image with full provenance and status:
 
 | Field | Required | Values | Purpose |
 |-------|----------|--------|---------|
-| `filename` | Yes | Named per convention | Final filename in `assets/` |
-| `alt` | Yes | Descriptive text | Accessibility alt text |
-| `section` | Yes | Matches `structure.md` | Which document section uses this image |
-| `layout` | Yes | `full-width` or `side-by-side` | Determines HTML pattern in Phase 4 |
+| `filename` | Yes | Raw name in Phase 2; convention-named in Phase 4 | Filename in `assets/` |
+| `alt` | Yes (in Phase 4); `null` allowed during Phase 2 bootstrap | Descriptive text | Accessibility alt text |
+| `section` | Yes (in Phase 4); `null` allowed during Phase 2 bootstrap | Matches `final_content.md` section | Which document section uses this image |
+| `layout` | Yes (in Phase 4); `null` allowed during Phase 2 bootstrap | `full-width` or `side-by-side` | Determines HTML pattern in Phase 5 |
 | `source.type` | Yes | `figma-design`, `figjam-board`, `manual` | Source classification |
 | `source.url` | If Figma/FigJam | Original URL | Traceability |
 | `source.fileKey` | If Figma/FigJam | Extracted from URL | Re-extraction if needed |
@@ -732,7 +784,7 @@ The manifest tracks every image with full provenance and status:
 | `source.tool` | If Figma/FigJam | Tool name used | Debugging |
 | `source.originalPath` | If manual file-path | Absolute path | Traceability |
 | `source.method` | If manual | `file-path` or `pasted` | How user provided the image |
-| `status` | Yes | `pending`, `extracted`, `confirmed`, `failed` | Workflow tracking |
+| `status` | Yes | `pending`, `extracted` (Phase 2 bootstrap), `selected` (Phase 4 intermediate), `confirmed` (Phase 4 final), `archived` (kept but unused), `failed` | Workflow tracking |
 | `extractedAt` | Yes | ISO 8601 timestamp | When image was captured |
 
 ### HTML Referencing Patterns
