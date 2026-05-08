@@ -1,0 +1,8 @@
+# Local-only files
+.DS_Store
+*.swp
+
+# Defense-in-depth: never accept secrets in this repo
+.figma-token
+.env
+*.token

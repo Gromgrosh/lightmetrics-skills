@@ -56,7 +56,7 @@ Have these ready before beginning:
 
 - [ ] **Content scope** — what the document covers, and what's explicitly out of scope
 - [ ] **Target audience** — who will read this and their technical level
-- [ ] **Languages** — which languages the document needs to support
+- [ ] **Locales** — confirm the 10-locale default (en-US + 9 translations) or decide a custom subset for this document
 - [ ] **Image sources** — Figma design URLs, FigJam board URLs, and/or local image files
 - [ ] **Reference materials** — existing docs, specs, or content to build from
 
@@ -112,7 +112,7 @@ The skill supports **3 image source types**:
 - **Keep scope tight** — one document per workflow run works best
 - **Consolidate feedback** into a single round when possible (Phase 6 warns at 5+ iterations)
 - **Use "Other"** in interactive questions for custom answers beyond the predefined choices
-- **For multilingual docs**, review translations carefully in Phase 3 — native speaker review is ideal
+- **For the default 10-locale generation**, native-speaker review of each non-primary file is strongly recommended — 9 translations per document is a lot to QA. If you don't have native review available for all locales, customize down in Phase 1 Q5 rather than skipping QA.
 - **Flows captured before structure** — in Phase 2, every Figma/FigJam flow is read end-to-end into `raw_content.md` (with all designer notes), and screens are downloaded at 2x PNG. This makes the structure proposal flow-aware rather than template-generic.
 - **Selection, not re-extraction, in Phase 4** — Phase 4 picks from the image pool created in Phase 2, applies the strict naming convention, and handles any manual images added late.
 
@@ -134,7 +134,7 @@ If a conversation is interrupted, start a new session and point Claude to the pr
 
 The final deliverable is:
 - **Self-contained HTML** — all CSS embedded in `<style>` tags, images in `./assets/`
-- **Multi-language toggle** in the header (if configured)
+- **Multi-locale toggle** in the header — dropdown when 4+ locales (the 10-locale default), inline buttons for smaller subsets
 - **Responsive** — mobile (<640px), tablet (640-1199px), desktop (≥1200px)
 - **Accessible** — alt text on all images, correct heading hierarchy, WCAG AA contrast
 - **Packaged** in a `dist/` folder ready to share with your dev team
@@ -160,13 +160,30 @@ Use `AskUserQuestion` with these 4 questions:
 | 3 | "Who is the primary audience?" | `Audience` | **Field installers / technicians** — Hands-on workers doing physical setup · **End users / non-technical** — Everyday users who need clear, simple guidance · **Developers / engineers** — Technical staff integrating or maintaining systems · **Managers / stakeholders** — Decision-makers needing overview-level information |
 | 4 | "What is the audience's technical level?" | `Tech level` | **Beginner** — Needs detailed step-by-step guidance with screenshots · **Intermediate** — Familiar with the domain, needs reference-level detail · **Advanced** — Expert-level, needs API specs, configs, and edge cases |
 
+**Default locale set (always applied):** Every document is generated in 10 locales by default, with English (United States) as the primary drafting language. Phase 3 drafts `final_content.md` in en-US, then generates 9 translation files (`final_content_{locale}.md`) for the others.
+
+| # | Display name | Locale code | Role |
+|---|---|---|---|
+| 1 | English (United States) | `en-US` | Primary — drafted first |
+| 2 | English (United Kingdom) | `en-GB` | Translation |
+| 3 | Español (España) | `es-ES` | Translation |
+| 4 | Español (América Latina) | `es-419` | Translation |
+| 5 | Français (France) | `fr-FR` | Translation |
+| 6 | Français (Canada) | `fr-CA` | Translation |
+| 7 | Português (Portugal) | `pt-PT` | Translation |
+| 8 | Português (Brasil) | `pt-BR` | Translation |
+| 9 | 日本語 (日本) | `ja-JP` | Translation |
+| 10 | 한국어 (대한민국) | `ko-KR` | Translation |
+
+Phase 1 Q5 lets the user confirm this default or customize a subset for a specific document.
+
 **Batch 2 — Scope and assets:**
 
 Use `AskUserQuestion` with these 3 questions:
 
 | # | Question | Header | Options |
 |---|----------|--------|---------|
-| 5 | "Which languages should the document support?" | `Languages` | **English only** — Single language document · **English + Portuguese** — Bilingual with language toggle · **English + Spanish** — Bilingual with language toggle · **English + Portuguese + Spanish** — Trilingual with language toggle |
+| 5 | "Generate the document in all 10 default locales?" | `Locales` | **Yes — all 10 default locales** *(recommended)* — Drafts in en-US, generates translations for en-GB, es-ES, es-419, fr-FR, fr-CA, pt-PT, pt-BR, ja-JP, ko-KR · **Customize subset** — Specify which locales you want in chat (still drafted in en-US first) |
 | 6 | "What image sources will you provide?" | `Assets` | **Figma design URLs** — Screenshots from Figma design files · **FigJam board URLs** — Diagrams and flows from FigJam boards · **Local image files** — File paths or images pasted into conversation · **No images yet** — Will add images later |
 | 7 | "Give this document a short name (used for the project folder, e.g. 'rideview-install-guide')" | `Doc name` | *(No predefined options — use a single free-text question. Ask as a follow-up message, not via AskUserQuestion, since this always needs a custom answer.)* |
 
@@ -183,7 +200,7 @@ After collecting all answers:
    - **Type:** Installation Guide
    - **Purpose:** Onboard new users — help field installers set up the device
    - **Audience:** Field installers / technicians (Beginner level)
-   - **Languages:** English + Portuguese
+   - **Locales:** All 10 default (en-US primary; en-GB, es-ES, es-419, fr-FR, fr-CA, pt-PT, pt-BR, ja-JP, ko-KR translations)
    - **Assets:** Figma design URLs, Local image files
    - **Document name:** rideview-install-guide
    ```
@@ -308,20 +325,20 @@ User approves `raw_content.md` + `structure.md` → Phase 3
 
 4. **Finalize primary language content** once all sections are approved.
 
-5. **Generate language translations** (based on languages selected in Phase 1):
-   - For each additional language (e.g., Portuguese, Spanish):
-     - Translate the approved `final_content.md` content
-     - Translate meaning, not just words — adapt idioms, maintain professional tone
-     - Preserve `[IMAGE: ...]` placeholders and `[WARNING]`/`[INFO]` markers as-is (these are not translated)
-     - Write to `final_content_{lang}.md` (e.g., `final_content_pt.md`, `final_content_es.md`)
-   - Present translations for user review (user or native speaker can approve/edit)
-   - If only one language was selected in Discovery, skip this step
+5. **Generate translations for the non-primary locales** (default: 9 translations; or fewer if the user customized in Phase 1):
+   - For each non-primary locale (en-GB, es-ES, es-419, fr-FR, fr-CA, pt-PT, pt-BR, ja-JP, ko-KR by default):
+     - Translate `final_content.md` (en-US) into the target locale
+     - Translate meaning, not just words — adapt idioms, follow regional conventions (en-GB spelling, es-419 vs es-ES vocabulary, pt-BR vs pt-PT differences, etc.)
+     - Preserve `[IMAGE: ...]` placeholders and `[WARNING]`/`[INFO]`/`[CONDITIONAL]`/`[SUCCESS]` markers verbatim
+     - Write to `final_content_{locale}.md` using BCP-47 codes with hyphen (e.g. `final_content_en-GB.md`, `final_content_es-419.md`, `final_content_pt-BR.md`, `final_content_ja-JP.md`, `final_content_ko-KR.md`)
+   - Present each translation for user review (native-speaker review is strongly recommended given 9 files by default)
+   - If the user customized to a subset in Phase 1, generate only those files
 
-6. **Finalize all language files** once translations are approved.
+6. **Finalize all locale files** once translations are approved.
 
 ### Artifacts
-- `[document-name]/final_content.md` — approved primary language content with image placeholders
-- `[document-name]/final_content_{lang}.md` — approved translation per additional language (if multilingual)
+- `[document-name]/final_content.md` — approved primary-locale (en-US) content with image placeholders
+- `[document-name]/final_content_{locale}.md` — one approved translation per non-primary locale, using BCP-47 codes (e.g. `final_content_en-GB.md`, `final_content_es-ES.md`, `final_content_es-419.md`, `final_content_fr-FR.md`, `final_content_fr-CA.md`, `final_content_pt-PT.md`, `final_content_pt-BR.md`, `final_content_ja-JP.md`, `final_content_ko-KR.md`)
 
 > `raw_content.md` is **read-only** during Phase 3 — preserved for traceability. If you discover a capture gap, fix it by re-running the Phase 2 capture for that frame, not by editing `raw_content.md` here.
 >
@@ -621,9 +638,16 @@ See the **Image Rules Reference** appendix below for complete details on:
 
 ### Language Switching Pattern
 ```html
-<span data-lang="en">English text</span>
-<span data-lang="pt">Portuguese text</span>
+<span data-lang="en-US">English (US) text</span>
+<span data-lang="en-GB">English (UK) text</span>
+<span data-lang="es-ES">Español (España) texto</span>
+<span data-lang="es-419">Español (América Latina) texto</span>
+<span data-lang="pt-BR">Português (Brasil) texto</span>
+<span data-lang="ja-JP">日本語のテキスト</span>
+<span data-lang="ko-KR">한국어 텍스트</span>
 ```
+
+Use BCP-47 locale codes for `data-lang` (hyphen between language and region). With 10 locales, the Phase 5 language switcher should render as a dropdown rather than inline buttons.
 
 ### Self-Contained HTML
 All styles must be embedded in `<style>` tags. All images should be referenced from relative `./assets/` path or embedded as base64 for true single-file output.
